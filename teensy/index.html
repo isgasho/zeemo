@@ -1,0 +1,77 @@
+<html>
+
+<head>
+</head>
+
+<body>
+    <input id="cc1" type="button" value="cc1" />
+    <input id="cc2" type="button" value="cc2" />
+    <script>
+    let midi = null; // global MIDIAccess object
+    let teensy = null;
+
+    function send_cc(midiAccess, portID) {
+        const output = midiAccess.outputs.get(portID);
+        output.send([0xB0, 60, 0x7f]); // sends the message.
+    }
+
+    function cc1() {
+        console.log("cc1");
+        teensy.send([0xB0, 60, 120]);
+    }
+
+    function cc2() {
+        console.log("cc2");
+        teensy.send([0xB1, 53, 32]);
+    }
+
+    function listInputsAndOutputs(midiAccess) {
+        for (const entry of midiAccess.inputs) {
+            const input = entry[1];
+            console.log(
+                `Input port [type:'${input.type}']` +
+                ` id:'${input.id}'` +
+                ` manufacturer:'${input.manufacturer}'` +
+                ` name:'${input.name}'` +
+                ` version:'${input.version}'`
+            );
+        }
+
+        for (const entry of midiAccess.outputs) {
+            const output = entry[1];
+            console.log(
+                `Output port [type:'${output.type}'] id:'${output.id}' manufacturer:'${output.manufacturer}' name:'${output.name}' version:'${output.version}'`
+            );
+            if (output.name == "Teensy MIDI") {
+                console.log("got teensy midi output!");
+                teensy = output;
+                document.getElementById("cc1").addEventListener("click", cc1, false);
+                document.getElementById("cc2").addEventListener("click", cc2, false);
+            }
+        }
+    }
+
+    navigator.permissions.query({ name: "midi", sysex: true }).then((result) => {
+        if (result.state === "granted") {
+            // Access granted.
+        } else if (result.state === "prompt") {
+            // Using API will prompt for permission
+        }
+        // Permission was denied by user prompt or permission policy
+    });
+
+    function onMIDISuccess(midiAccess) {
+        console.log("MIDI ready!");
+        midi = midiAccess; // store in the global (in real usage, would probably keep in an object instance)
+        listInputsAndOutputs(midi);
+    }
+
+    function onMIDIFailure(msg) {
+        console.error(`Failed to get MIDI access - ${msg}`);
+    }
+
+    navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
+    </script>
+</body>
+
+</html>
