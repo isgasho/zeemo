@@ -4,7 +4,8 @@
 </head>
 
 <body>
-    <input id="cc1" type="button" value="cc1" />
+    <input id="cc1" type="button" value="cc1 60 120" />
+    <input id="cc1a" type="button" value="cc1 01 30" />
     <input id="cc2" type="button" value="cc2" />
     <script>
     let midi = null; // global MIDIAccess object
@@ -20,9 +21,14 @@
         teensy.send([0xB0, 60, 120]);
     }
 
+    function cc1a() {
+        console.log("cc1a");
+        teensy.send([0xB0, 1, 30]);
+    }
+
     function cc2() {
         console.log("cc2");
-        teensy.send([0xB1, 53, 32]);
+        teensy.send([0xB0, 120, 120]);
     }
 
     function listInputsAndOutputs(midiAccess) {
@@ -42,10 +48,11 @@
             console.log(
                 `Output port [type:'${output.type}'] id:'${output.id}' manufacturer:'${output.manufacturer}' name:'${output.name}' version:'${output.version}'`
             );
-            if (output.name == "Teensy MIDI") {
+            if (output.name.includes("Teensy")) {
                 console.log("got teensy midi output!");
                 teensy = output;
                 document.getElementById("cc1").addEventListener("click", cc1, false);
+                document.getElementById("cc1a").addEventListener("click", cc1a, false);
                 document.getElementById("cc2").addEventListener("click", cc2, false);
             }
         }

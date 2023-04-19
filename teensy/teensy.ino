@@ -4,14 +4,20 @@
 
 void setup() {
   Serial.begin(115200);
-  Serial.println("MIDI begin2");
+  Serial.println("MIDI begin3");
 
   // setup pwm
   // https://www.pjrc.com/teensy/td_pulse.html
+  // pinMode(PIN_D0,0);
   for (byte i = 0; i < 8; i++) {
+    pinMode(i,OUTPUT);
     analogWriteFrequency(i, 9155);
   }
   analogWriteResolution(14);
+  // pinMode(0,OUTPUT);
+  // pinMode(1,OUTPUT);
+  // analogWrite(0,200);
+  // analogWrite(1,200);
 }
 
 void loop() {
@@ -82,6 +88,10 @@ void processMIDI(void) {
       Serial.print(", value=");
       Serial.println(data2, DEC);
       analogWrite(channel - 1, ((word)data1) * ((word)data2));
+      Serial.print("writing to channel ");
+      Serial.print(channel-1);
+      Serial.print(" value ");
+      Serial.println( ((word)data1) * ((word)data2));
       break;
 
     case usbMIDI.ProgramChange:  // 0xC0
