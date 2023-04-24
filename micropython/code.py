@@ -2,6 +2,9 @@ import time
 import usb_midi
 import adafruit_midi
 from adafruit_midi.control_change import ControlChange
+import supervisor
+
+supervisor.set_usb_identification("ZEEMO")
 
 from machine import Pin, PWM
 
