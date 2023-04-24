@@ -8,6 +8,10 @@ supervisor.set_usb_identification("ZEEMO")
 
 from machine import Pin, PWM
 
+# overclocking may improve pwm performance?
+# import machine
+# machine.freq(270000000)
+
 # LUA CODE FOR UNPACKING
 # function unpack_14bit_to_7bit(num)
 #   local highBits = num >> 7 -- shift right by 7 bits to get the high bits
@@ -27,8 +31,8 @@ pwms=[]
 for i, pin in enumerate([6,7,8,9,10,11,12,13]):
     pwms.append(PWM(pin))
     # set to low freq, to allow best resolution
-    # https://www.i-programmer.info/programming/hardware/14751-the-pico-in-micropython-pwm.html
-    pwms[i].freq(1000)  
+    # https://www.i-programmer.info/programming/hardware/14751-the-pico-in-micropython-pwm.html?start=2
+    pwms[i].freq(round(machine.freq()/16384)) # target 14-bit resolution frequency  
      # set to 50% duty on start 
     pwms[i].duty_u16(32768)
 
