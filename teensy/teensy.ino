@@ -87,11 +87,11 @@ void processMIDI(void) {
       Serial.print(data1, DEC);
       Serial.print(", value=");
       Serial.println(data2, DEC);
-      analogWrite(channel - 1, ((word)data1) * ((word)data2));
+      analogWrite(channel - 1, (data1 << 7) | data2);
       Serial.print("writing to channel ");
       Serial.print(channel-1);
       Serial.print(" value ");
-      Serial.println( ((word)data1) * ((word)data2));
+      Serial.println( (data1 << 7) | data2 );
       break;
 
     case usbMIDI.ProgramChange:  // 0xC0
